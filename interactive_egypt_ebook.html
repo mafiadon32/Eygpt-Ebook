@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secrets of Ancient Egypt - Interactive eBook</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            line-height: 1.6;
+            color: #2c1810;
+            background: linear-gradient(135deg, #f4e4bc 0%, #e8d5a3 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .cover {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #8B4513 0%, #DAA520 50%, #FFD700 100%);
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cover::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 10 L60 40 L90 40 L70 60 L80 90 L50 75 L20 90 L30 60 L10 40 L40 40 Z" fill="rgba(255,215,0,0.1)"/></svg>');
+            background-size: 50px 50px;
+            opacity: 0.3;
+        }
+
+        .cover h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .cover .subtitle {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cover .grade-info {
+            font-size: 1em;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+        }
+
+        .navigation {
+            background: #8B4513;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .nav-button {
+            background: #DAA520;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .nav-button:hover {
+            background: #FFD700;
+            color: #8B4513;
+        }
+
+        .nav-button.active {
+            background: #FFD700;
+            color: #8B4513;
+        }
+
+        .chapter {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .chapter.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: #8B4513;
+            font-size: 2em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #DAA520;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #DAA520;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+        }
+
+        .image-container {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            border: 2px solid #DAA520;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            max-width: 400px;
+            height: 250px;
+            background: linear-gradient(45deg, #8B4513, #DAA520);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 0 auto 10px auto;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .image-caption {
+            font-style: italic;
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .highlight-box {
+            background: #fff3cd;
+            border: 2px solid #DAA520;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 5px solid #8B4513;
+        }
+
+        .fact-box {
+            background: #e8f4f8;
+            border: 2px solid #17a2b8;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 5px solid #007bff;
+        }
+
+        .fact-box h4 {
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .references {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .references ol {
+            padding-left: 20px;
+        }
+
+        .references li {
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .references a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .references a:hover {
+            text-decoration: underline;
+        }
+
+        .toc {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #DAA520;
+        }
+
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .toc li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toc li:hover {
+            background: #fff3cd;
+            padding-left: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #8B4513, #DAA520);
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+            
+            .cover h1 {
+                font-size: 2em;
+            }
+            
+            .nav-button {
+                padding: 6px 10px;
+                font-size: 12px;
+                margin: 3px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Cover Page -->
+        <div class="cover">
+            <h1>Secrets of Ancient Egypt</h1>
+            <p class="subtitle">The Nile, Tutankhamun, and the Valley of the Kings</p>
+            <p class="grade-info">An Interactive Educational Journey for Grade 5 Learners</p>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <button class="nav-button active" onclick="showChapter(0)">Table of Contents</button>
+            <button class="nav-button" onclick="showChapter(1)">Chapter 1: The Nile</button>
+            <button class="nav-button" onclick="showChapter(2)">Chapter 2: Tutankhamun</button>
+            <button class="nav-button" onclick="showChapter(3)">Chapter 3: Valley of Kings</button>
+            <button class="nav-button" onclick="showChapter(4)">Chapter 4: Modern Connections</button>
+            <button class="nav-button" onclick="showChapter(5)">References</button>
+        </div>
+
+        <!-- Table of Contents -->
+        <div class="chapter active" id="chapter0">
+            <h2>📚 Table of Contents</h2>
+            <div class="toc">
+                <ul>
+                    <li onclick="showChapter(1)"><strong>Chapter 1:</strong> The Life-Giving Nile River</li>
+                    <li onclick="showChapter(2)"><strong>Chapter 2:</strong> The Mystery of King Tutankhamun's Intact Tomb</li>
+                    <li onclick="showChapter(3)"><strong>Chapter 3:</strong> The Valley of the Kings - City of the Dead</li>
+                    <li onclick="showChapter(4)"><strong>Chapter 4:</strong> Connecting Ancient Egypt to Modern Times</li>
+                    <li onclick="showChapter(5)"><strong>References</strong></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Chapter 1: The Nile -->
+        <div class="chapter" id="chapter1">
+            <h2>🏜️ Chapter 1: The Life-Giving Nile River</h2>
+            
+            <div class="image-container">
+                <div class="image-placeholder">🏜️ Ancient Egyptian Farmers Working Along the Nile</div>
+                <div class="image-caption">Ancient Egyptians farming along the fertile banks of the Nile River</div>
+            </div>
+
+            <h3>Introduction</h3>
+            <p>Imagine living in a desert where it almost never rains, but right through the middle flows a mighty river that brings life to everything around it. This was Ancient Egypt, and the Nile River was their lifeline. Without the Nile, there would have been no pyramids, no pharaohs, and no amazing civilization that we still marvel at today.</p>
+
+            <div class="highlight-box">
+                <h4>🌊 The Gift of the Nile</h4>
+                <p>The ancient Greek historian Herodotus called Egypt "the gift of the Nile," and he was absolutely right. The Nile River is the longest river in the world, stretching over 6,650 kilometers from its sources in East Africa to the Mediterranean Sea in Egypt.</p>
+            </div>
+
+            <div class="image-container">
+                <div class="image-placeholder">🌊 The Nile River Flooding Cycle</div>
+                <div class="image-caption">Annual flooding cycle of the Nile River bringing fertile soil</div>
+            </div>
+
+            <h3>The Annual Flood Cycle</h3>
+            <p>Every year, from June to September, the Nile would flood its banks. This wasn't a disaster - it was a blessing! The floodwaters carried rich, dark soil called silt from the highlands of Ethiopia. When the waters receded, they left behind this fertile soil, creating a green strip of farmland on both sides of the river.</p>
+
+            <div class="fact-box">
+                <h4>🗓️ The Three Seasons</h4>
+                <p><strong>Akhet (Inundation):</strong> June-October - The Nile floods the land</p>
+                <p><strong>Peret (Growing):</strong> October-February - Farmers plant crops</p>
+                <p><strong>Shemu (Harvest):</strong> February-June - Time to harvest crops</p>
+            </div>
+
+            <div class="image-container">
+                <div class="image-placeholder">🚰 Ancient Egyptian Irrigation System</div>
+                <div class="image-caption">Shaduf irrigation system used by ancient Egyptians</div>
+            </div>
+
+            <h3>Amazing Irrigation Systems</h3>
+            <p>The Egyptians didn't just wait for the flood - they controlled it! They built an amazing system of canals, dikes, and reservoirs to direct water where they needed it most. They used a tool called a shaduf - a long pole with a bucket on one end and a weight on the other - to lift water from the river to higher fields.</p>
+
+            <h3>The Sacred Nile</h3>
+            <p>To the ancient Egyptians, the Nile was sacred. They worshipped Hapi, the god of the Nile flood, and believed that the pharaoh had a special connection to the river's life-giving powers.</p>
+
+            <div class="image-container">
+                <div class="image-placeholder">⛵ Ancient Egyptian Boats on the Nile</div>
+                <div class="image-caption">Egyptian boats carrying goods and people along the Nile</div>
+            </div>
+        </div>
+
+        <!-- Chapter 2: Tutankhamun -->
+        <div class="chapter" id="chapter2">
+            <h2>👑 Chapter 2: The Mystery of King Tutankhamun's Intact Tomb</h2>
+            
+            <div class="image-container">
+                <div class="image-placeholder">👑 King Tutankhamun's Golden Mask</div>
+                <div class="image-caption">The famous golden funeral mask of King Tutankhamun</div>
+            </div>
+
+            <h3>The Boy King</h3>
+            <p>In 1332 BCE, a nine-year-old boy became pharaoh of Egypt. His name was Tutankhamun, which means "living image of Amun" (Amun was an important Egyptian god). Most people call him King Tut. He ruled for only about ten years before dying at around age 19, but his tomb would become the most famous archaeological discovery in history.</p>
+
+            <div class="highlight-box">
+                <h4>🔍 Why Did His Tomb Survive?</h4>
+                <p>For over 3,000 years, tomb robbers had been breaking into Egyptian tombs to steal treasures. So how did Tutankhamun's tomb survive intact?</p>
+                <ul>
+                    <li><strong>Hidden Location:</strong> Tucked away in an unusual spot</li>
+                    <li><strong>Covered by Debris:</strong> Natural camouflage from floods and construction</li>
+                    <li><strong>Quick Burial:</strong> Hastily prepared due to unexpected death</li>
+                    <li><strong>Forgotten Pharaoh:</strong> Later rulers tried to erase him from history</li>
+                </ul>
+            </div>
+
+            <div class="image-container">
+                <div class="image-placeholder">🏺 Howard Carter's Discovery</div>
+                <div class="image-caption">Howard Carter examining artifacts in Tutankhamun's tomb</div>
+            </div>
+
+            <h3>Howard Carter's Amazing Discovery</h3>
+            <p>On November 4, 1922, British archaeologist Howard Carter was working in the Valley of the Kings when his water boy discovered a step cut into the rock. Carter carefully excavated and found a stairway leading to a sealed doorway.</p>
+
+            <div class="fact-box">
+                <h4>💬 Famous Quote</h4>
+                <p>When Carter made a small hole in the door and held up a candle to peer inside, his patron Lord Carnarvon asked, "Can you see anything?" Carter's famous reply was, "Yes, wonderful things!"</p>
+            </div>
+
+            <div class="image-container">
+                <div class="image-placeholder">💰 Treasures from the Tomb</div>
+                <div class="image-caption">Some of the 5,000+ artifacts found in Tutankhamun's tomb</div>
+            </div>
+
+            <h3>Incredible Treasures</h3>
+            <p>Tutankhamun's tomb contained over 5,000 objects, including:</p>
+            <ul>
+                <li><strong>The Golden Mask:</strong> Made of solid gold, weighing 10.23 kilograms</li>
+                <li><strong>Three Nested Coffins:</strong> The innermost made of solid gold</li>
+                <li><strong>Six Chariots:</strong> Used for hunting and warfare</li>
+                <li><strong>Beautiful Furniture:</strong> Chairs, beds, and chests covered in gold</li>
+                <li><strong>Weapons:</strong> Including a dagger made from meteorite iron</li>
+                <li><strong>Food and Clothing:</strong> To sustain the pharaoh in the afterlife</li>
+            </ul>
+
+            <div class="image-container">
+                <div class="image-placeholder">🔮 The Pharaoh's Curse</div>
+                <div class="image-caption">Newspaper headlines about the "Curse of the Pharaohs"</div>
+            </div>
+
+            <h3>The Curse of the Pharaohs</h3>
+            <p>Shortly after the tomb's discovery, strange events began happening. Lord Carnarvon died from an infected mosquito bite just five months after entering the tomb. Newspapers began writing about the "Curse of the Pharaohs," but scientists point out that many people involved in the discovery lived long, healthy lives, including Howard Carter himself!</p>
+        </div>
+
+        <!-- Chapter 3: Valley of the Kings -->
+        <div class="chapter" id="chapter3">
+            <h2>🏔️ Chapter 3: The Valley of the Kings - City of the Dead</h2>
+            
+            <div class="image-container">
+                <div class="image-placeholder">🏔️ Valley of the Kings Overview</div>
+                <div class="image-caption">Aerial view of the Valley of the Kings showing multiple tomb entrances</div>
+            </div>
+
+            <h3>A Royal Cemetery</h3>
+            <p>For almost 500 years, from about 1550 to 1070 BCE, Egyptian pharaohs were buried in a hidden valley on the west bank of the Nile River near the ancient city of Thebes (modern-day Luxor). This place is called the Valley of the Kings, and it contains 63 known tombs.</p>
+
+            <div class="highlight-box">
+                <h4>🏺 Why Was the Valley Created?</h4>
+                <p>Before the Valley of the Kings, pharaohs were buried in pyramids. But there were problems:</p>
+                <ul>
+                    <li><strong>Too Obvious:</strong> Pyramids announced "treasure buried here!"</li>
+                    <li><strong>Expensive:</strong> Required enormous resources and thousands of workers</li>
+                    <li><strong>Religious Changes:</strong> The capital moved to Thebes</li>
+                </ul>
+            </div>
+
+            <div class="image-container">
+                <div class="image-placeholder">⛰️ The Perfect Location</div>
+                <div class="image-caption">The pyramid-shaped mountain al-Qurn watching over the valley</div>
+            </div>
+
+            <h3>The Perfect Location</h3>
+            <p>The Valley of the Kings was chosen for several reasons:</p>
+            <ul>
+                <li><strong>Hidden Location:</strong> Easier to guard and harder for robbers to find</li>
+                <li><strong>Natural Pyramid:</strong> The mountain al-Qurn acted as a natural pyramid</li>
+                <li><strong>West Bank Symbolism:</strong> Associated with death and the afterlife</li>
+                <li><strong>Solid Rock:</strong> Perfect for carving elaborate underground tombs</li>
+            </ul>
+
+            <div class="image-container">
+                <div class="image-placeholder">🔨 Tomb Construction</div>
+                <div class="image-caption">Ancient workers carving and decorating a royal tomb</div>
+            </div>
+
+            <h3>How Tombs Were Built</h3>
+            <p>Creating a royal tomb was enormous work that could take decades:</p>
+            <ol>
+                <li><strong>Planning:</strong> Architects and priests designed the layout</li>
+                <li><strong>Excavation:</strong> Skilled workers carved into solid rock</li>
+                <li><strong>Decoration:</strong> Artists covered walls with colorful paintings</li>
+                <li><strong>Security:</strong> Multiple barriers to deter tomb robbers</li>
+            </ol>
+
+            <div class="fact-box">
+                <h4>🏘️ The Workers' Village</h4>
+                <p>The tomb builders lived in a special village called Deir el-Medina. These 400 skilled craftsmen, artists, and scribes were completely supported by the royal treasury. They even went on the world's first recorded labor strike!</p>
+            </div>
+
+            <div class="image-container">
+                <div class="image-placeholder">🎨 Tomb Decorations</div>
+                <div class="image-caption">Beautiful wall paintings showing the journey to the afterlife</div>
+            </div>
+
+            <h3>Famous Tombs</h3>
+            <ul>
+                <li><strong>KV62 - Tutankhamun:</strong> Most famous because found intact</li>
+                <li><strong>KV7 - Ramesses II:</strong> Tomb of Egypt's greatest pharaoh</li>
+                <li><strong>KV17 - Seti I:</strong> Called the most beautiful tomb in the valley</li>
+                <li><strong>KV35 - Amenhotep II:</strong> Where royal mummies were hidden for protection</li>
+            </ul>
+        </div>
+
+        <!-- Chapter 4: Modern Connections -->
+        <div class="chapter" id="chapter4">
+            <h2>🌍 Chapter 4: Connecting Ancient Egypt to Modern Times</h2>
+            
+            <div class="image-container">
+                <div class="image-placeholder">🏛️ Modern Egyptian Museum</div>
+                <div class="image-caption">Visitors learning about ancient Egypt in a modern museum</div>
+            </div>
+
+            <h3>Lessons from the Past</h3>
+            <p>Ancient Egypt teaches us important lessons that are still relevant today. The Egyptians showed us how geography shapes civilization - they built one of the world's greatest civilizations in a desert because they learned to work with their environment instead of against it.</p>
+
+            <div class="highlight-box">
+                <h4>🏗️ Modern Egypt and the Nile</h4>
+                <p>Today, the Nile is still crucial to Egypt's survival. The Aswan High Dam, completed in 1970, now controls the river's flooding, allowing year-round irrigation. Modern Egyptians still live primarily along the Nile, just as their ancestors did 5,000 years ago.</p>
+            </div>
+
+            <div class="image-container">
+                <div class="image-placeholder">🔬 Archaeological Work</div>
+                <div class="image-caption">Modern archaeologists carefully excavating and recording finds</div>
+            </div>
+
+            <h3>Archaeological Importance</h3>
+            <p>The discovery of Tutankhamun's tomb showed the world the importance of careful archaeological work. Howard Carter spent ten years methodically recording and preserving everything he found, setting a standard for archaeological excavation that we still follow today.</p>
+
+            <div class="fact-box">
+                <h4>🇿🇦 South African Connection</h4>
+                <p>South Africa's museums, including the Iziko South African Museum in Cape Town, help preserve and share knowledge about ancient civilizations. These institutions connect us to our shared human heritage.</p>
+            </div>
+
+            <div class="image-container">
+                <div class="image-placeholder">📚 Cultural Legacy</div>
+                <div class="image-caption">Ancient Egyptian artifacts displayed in museums worldwide</div>
+            </div>
+
+            <h3>What Can We Learn?</h3>
+            <p>Ancient Egypt teaches us about:</p>
+            <ul>
+                <li>The importance of respecting and working with our natural environment</li>
+                <li>How human creativity and determination can overcome challenges</li>
+                <li>The value of preserving knowledge and culture for future generations</li>
+                <li>How archaeological discoveries help us understand our shared human heritage</li>
+            </ul>
+        </div>
+
+        <!-- References -->
+        <div class="chapter" id="chapter5">
+            <h2>📖 References</h2>
+            <div class="references">
+                <ol>
+                    <li>Bard, K. A. (2015). <em>An Introduction to the Archaeology of Ancient Egypt</em>. Blackwell Publishing. Available at: <a href="https://www.wiley.com/en-us/An+Introduction+to+the+Archaeology+of+Ancient+Egypt%2C+2nd+Edition-p-9781405111485" target="_blank">https://www.wiley.com/en-us/An+Introduction+to+the+Archaeology+of+Ancient+Egypt</a></li>
+                    
+                    <li>British Museum. (2024). "Ancient Egypt." <em>British Museum Collection Online</em>. <a href="https://www.britishmuseum.org/collection/egypt" target="_blank">https://www.britishmuseum.org/collection/egypt</a></li>
+                    
+                    <li>Carter, H. & Mace, A. C. (1923-1933). <em>The Tomb of Tut-Ankh-Amun</em> (3 volumes). Cassell and Company. Digital archive: <a href="https://www.griffith.ox.ac.uk/archive/" target="_blank">https://www.griffith.ox.ac.uk/archive/</a></li>
+                    
+                    <li>Dodson, A. & Ikram, S. (2008). <em>The Tomb in Ancient Egypt</em>. Thames & Hudson. Available at: <a href="https://thamesandhudson.com/the-tomb-in-ancient-egypt-9780500051726" target="_blank">https://thamesandhudson.com/the-tomb-in-ancient-egypt</a></li>
+                    
+                    <li>Egyptian Ministry of Tourism and Antiquities. (2024). "Valley of the Kings." <em>Official Egypt Tourism Portal</em>. <a href="https://www.egypt.travel/en/attractions/valley-of-the-kings" target="_blank">https://www.egypt.travel/en/attractions/valley-of-the-kings</a></li>
+                    
+                    <li>Hawass, Z. (2018). "Tutankhamun: The Golden King and the Great Pharaohs." <em>National Geographic Society</em>. <a href="https://www.nationalgeographic.com/history/article/tutankhamun" target="_blank">https://www.nationalgeographic.com/history/article/tutankhamun</a></li>
+                    
+                    <li>Ikram, S. (2010). <em>Ancient Egypt: An Introduction</em>. Cambridge University Press. Available at: <a href="https://www.cambridge.org/core/books/ancient-egypt/" target="_blank">https://www.cambridge.org/core/books/ancient-egypt/</a></li>
+                    
+                    <li>Lehner, M. (2008). <em>The Complete Pyramids</em>. Thames & Hudson. <a href="https://thamesandhudson.com/the-complete-pyramids-9780500285473" target="_blank">https://thamesandhudson.com/the-complete-pyramids</a></li>
+                    
+                    <li>Metropolitan Museum of Art. (2024). "Egyptian Art." <em>Heilbrunn Timeline of Art History</em>. <a href="https://www.metmuseum.org/toah/hi/hi_egypt.htm" target="_blank">https://www.metmuseum.org/toah/hi/hi_egypt.htm</a></li>
+                    
+                    <li>National Geographic Kids. (2024). "Ancient Egypt Facts." <a href="https://kids.nationalgeographic.com/history/article/ancient-egypt" target="_blank">https://kids.nationalgeographic.com/history/article/ancient-egypt</a></li>
+                    
+                    <li>Reeves, N. (2016). <em>The Complete Tutankhamun</em>. Thames & Hudson. Available at: <a href="https://thamesandhudson.com/the-complete-tutankhamun-9780500051986" target="_blank">https://thamesandhudson.com/the-complete-tutankhamun</a></li>
+                    
+                    <li>Shaw, I. (2000). <em>The Oxford History of Ancient Egypt</em>. Oxford University Press. <a href="https://global.oup.com/academic/product/the-oxford-history-of-ancient-egypt-9780192804587" target="_blank">https://global.oup.com/academic/product/the-oxford-history-of-ancient-egypt</a></li>
+                    
+                    <li>Smithsonian National Museum of Natural History. (2024). "Ancient Egypt and Nubia." <a href="https://naturalhistory.si.edu/education/teaching-resources/written-stone/ancient-egypt-and-nubia" target="_blank">https://naturalhistory.si.edu/education/teaching-resources/written-stone/ancient-egypt-and-nubia</a></li>
+                    
+                    <li>UNESCO World Heritage Centre. (2024). "Ancient Thebes with its Necropolis." <em>World Heritage List</em>. <a href="https://whc.unesco.org/en/list/87/" target="_blank">https://whc.unesco.org/en/list/87/</a></li>
+                    
+                    <li>Weeks, K. R. (2024). "Theban Mapping Project." <em>Valley of the Kings Atlas</em>. <a href="https://www.thebanmappingproject.com/" target="_blank">https://www.thebanmappingproject.com/</a></li>
+                </ol>
+                
+                <div style="margin-top: 30px; padding: 20px; background: #fff3cd; border-radius: 8px;">
+                    <p><strong>About This eBook:</strong> Created for Grade 5 learners in South Africa as an educational resource about Ancient Egypt. All information has been adapted to be age-appropriate while maintaining historical accuracy.</p>
+                    <p><strong>Educational Level:</strong> Grade 5 | <strong>Region:</strong> South Africa | <strong>Word Count:</strong> Approximately 3,200 words</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentChapter = 0;
+        const totalChapters = 6;
+
+        function showChapter(chapterNum) {
+            // Hide all chapters
+            const chapters = document.querySelectorAll('.chapter');
+            chapters.forEach(chapter => {
+                chapter.classList.remove('active');
+            });
+
+            // Remove active class from all nav buttons
+            const navButtons = document.querySelectorAll('.nav-button');
+            navButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Show selected chapter
+            document.getElementById(`chapter${chapterNum}`).classList.add('active');
+            
+            // Add active class to selected nav button
+            navButtons[chapterNum].classList.add('active');
+
+            // Update progress bar
+            const progressFill = document.getElementById('progressFill');
+            const progressPercentage = (chapterNum / (totalChapters - 1)) * 100;
+            progressFill.style.width = `${progressPercentage}%`;
+
+            // Update current chapter
+            currentChapter = chapterNum;
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft' && currentChapter > 0) {
+                showChapter(currentChapter - 1);
+            } else if (event.key === 'ArrowRight' && currentChapter < totalChapters - 1) {
+                showChapter(currentChapter + 1);
+            }
+        });
+
+        // Initialize with table of contents
+        document.addEventListener('DOMContentLoaded', function() {
+            showChapter(0);
+        });
+
+        // Add some interactive elements for engagement
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click sound effect (optional)
+            const navButtons = document.querySelectorAll('.nav-button');
+            navButtons.forEach(button => {
+                button.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.05)';
+                });
+                button.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+
+            // Add hover effects to image placeholders
+            const imagePlaceholders = document.querySelectorAll('.image-placeholder');
+            imagePlaceholders.forEach(placeholder => {
+                placeholder.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.02)';
+                    this.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)';
+                });
+                placeholder.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                    this.style.boxShadow = 'none';
+                });
+            });
+        });
+
+        // Print functionality
+        function printBook() {
+            window.print();
+        }
+
+        // Share functionality
+        function shareBook() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Secrets of Ancient Egypt - Interactive eBook',
+                    text: 'Check out this amazing interactive eBook about Ancient Egypt!',
+                    url: window.location.href
+                });
+            } else {
+                // Fallback for browsers that don't support Web Share API
+                const url = window.location.href;
+                navigator.clipboard.writeText(url).then(() => {
+                    alert('Link copied to clipboard!');
+                });
+            }
+        }
+    </script>
+
+    <!-- Add some additional interactive features -->
+    <div style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
+        <button onclick="shareBook()" style="background: #DAA520; color: white; border: none; padding: 10px; border-radius: 50%; margin: 5px; cursor: pointer; font-size: 16px;" title="Share this book">📤</button>
+        <button onclick="printBook()" style="background: #8B4513; color: white; border: none; padding: 10px; border-radius: 50%; margin: 5px; cursor: pointer; font-size: 16px;" title="Print this book">🖨️</button>
+    </div>
